@@ -1,0 +1,6 @@
+{
+  "functions": {
+    "api/sync-posts.ts": { "maxDuration": 60 },
+    "api/telegram.ts": { "maxDuration": 30 }
+  }
+}

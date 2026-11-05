@@ -1,0 +1,55 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Subscriber {
+  chatId    BigInt   @id
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deliveries Delivery[]
+}
+
+model VkPost {
+  id        String   @id
+  text      String   @db.Text
+  link      String
+  photoUrl  String?  @db.Text
+  createdAt DateTime
+  fetchedAt DateTime @default(now())
+  deliveries Delivery[]
+}
+
+model Delivery {
+  id         String   @id @default(cuid())
+  postId     String
+  chatId     BigInt
+  status     DeliveryStatus @default(PENDING)
+  attempts   Int @default(0)
+  lastError  String? @db.Text
+  sentAt     DateTime?
+  createdAt  DateTime @default(now())
+  post       VkPost @relation(fields: [postId], references: [id])
+  subscriber Subscriber @relation(fields: [chatId], references: [chatId])
+  @@unique([postId, chatId])
+  @@index([status, createdAt])
+}
+
+enum DeliveryStatus {
+  PENDING
+  SENT
+  FAILED
+}
+
+model SyncState {
+  key             String @id
+  initialized     Boolean @default(false)
+  leaseOwner      String?
+  leaseExpiresAt  DateTime?
+  lastRunAt       DateTime?
+}
