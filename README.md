@@ -1,4 +1,4 @@
-# Grodno Airsoft — VK → Telegram Bot
+# VK → Telegram Bot
 
 A TypeScript, serverless Telegram notification bot with Russian-language commands.
 
